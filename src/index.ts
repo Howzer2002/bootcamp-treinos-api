@@ -1,8 +1,8 @@
-import { z } from "zod";
 import fastifySwagger from "@fastify/swagger";
-import fastifySwaggerUI from "@fastify/swagger-ui";
 import dotenv from "dotenv";
 import fastifyCors from "@fastify/cors";
+import apiReference from "@scalar/fastify-api-reference";
+
 dotenv.config();
 import {
   serializerCompiler,
@@ -38,29 +38,37 @@ await fastify.register(fastifySwagger, {
   transform: jsonSchemaTransform,
 });
 
-await fastify.register(fastifySwaggerUI, {
-  routePrefix: "/docs",
-});
-
 await fastify.register(fastifyCors, {
   origin: ["http://localhost:3000"],
   credentials: true,
 });
 
+await fastify.register(apiReference, {
+  routePrefix: "/docs",
+  configuration: {
+    sources: [
+      {
+        title: "Bootcamp Treinos API",
+        slug: "bootcamp-treinos-api",
+        url: "/swagger.json",
+      },
+      {
+        title: "Auth API",
+        slug: "auth-api",
+        url: "/api/auth/open-api/generate-schema",
+      },
+    ],
+  },
+});
+
 fastify.withTypeProvider<ZodTypeProvider>().route({
   method: "GET",
-  url: "/",
+  url: "/swagger.json",
   schema: {
-    description: "Deu certo, meu fi ",
-    tags: ["Hello"],
-    response: {
-      200: z.object({
-        message: z.string(),
-      }),
-    },
+    hide: true,
   },
-  handler: (request, reply) => {
-    reply.send({ message: "Hello World" });
+  handler: async () => {
+    return fastify.swagger();
   },
 });
 
