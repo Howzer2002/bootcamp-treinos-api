@@ -15,7 +15,7 @@ datasource db {
 
 model User {
   id            String        @id
-  WorkoutPlan   WorkoutPlan[]
+  workoutPlan   WorkoutPlan[]
   name          String
   email         String
   emailVerified Boolean       @default(false)
@@ -37,7 +37,7 @@ model WorkoutPlan {
   isActive   Boolean      @default(true)
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
-  WorkoutDay WorkoutDay[]
+  workoutDay WorkoutDay[]
 }
 
 enum WeekDay {
@@ -51,15 +51,16 @@ enum WeekDay {
 }
 
 model WorkoutDay {
-  id            String            @id @default(uuid())
-  name          String
-  workoutPlanId String
-  workoutPlan   WorkoutPlan       @relation(fields: [workoutPlanId], references: [id])
-  isRest        Boolean           @default(false)
-  weekDay       WeekDay
-  exercises     WorkoutExercise[]
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  id                         String            @id @default(uuid())
+  name                       String
+  workoutPlanId              String
+  workoutPlan                WorkoutPlan       @relation(fields: [workoutPlanId], references: [id])
+  isRest                     Boolean           @default(false)
+  weekDay                    WeekDay
+  exercises                  WorkoutExercise[]
+  estimatedDurationInMinutes Int
+  createdAt                  DateTime          @default(now())
+  updatedAt                  DateTime          @updatedAt
 }
 
 model WorkoutExercise {
